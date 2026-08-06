@@ -12,8 +12,9 @@
 
 ## About this repository
 
-The official website of **effectiveffect** — served as static files (HTML, CSS,
-images, self-hosted fonts) via **GitHub Pages**.
+The official website of **effectiveffect** — 
+served via **GitHub Pages** as static files (HTML, CSS,
+images, self-hosted fonts).
 
 - **Live site:** https://effectiveffect.com
 - **Contact:** effectiveffect@gmail.com
@@ -29,10 +30,13 @@ images/         Hero artwork: hero.webp + hero.png fallback
 ```
 
 No build step, framework, or tracking scripts — plain static HTML/CSS.
+
 Open `index.html` in a browser to preview locally.
 
 ### Deploying
 
 GitHub Pages serves this repository automatically:
+
 **Settings → Pages → Deploy from a branch → `main` / root.**
+
 Any change pushed to `main` redeploys the site in about a minute.
