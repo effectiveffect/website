@@ -143,7 +143,7 @@ body {
    logo's own weight contrast — heavy "effective", light "ffect". The default 900
    has nothing heavier to jump to, so the emphasis is built by making the LINE
    light and the <b> heavy, rather than the other way round. */
-h1.title   { --title-scale: 1.93; font-weight: 400; }
+h1.title   { --title-scale: 2.22; font-weight: 400; }
 h1.title b { font-weight: 900; }
 
 .title a {
