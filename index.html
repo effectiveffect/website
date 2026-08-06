@@ -23,9 +23,32 @@
   <meta property="og:image:alt" content="effectiveffect">
   <meta name="twitter:card" content="summary_large_image">
 
-  <!-- Favicon (transparent logo) -->
-  <link rel="icon" type="image/png" href="favicon.png">
-  <link rel="apple-touch-icon" href="favicon.png">
+  <!-- Icons. Bump the ?v= on ALL of them together whenever an icon file
+       changes — browsers and phone launchers cache favicons very hard and
+       will otherwise keep showing the old one for weeks. -->
+
+  <!-- favicon.ico and apple-touch-icon.png deliberately stay at the site ROOT:
+       clients that never parse this HTML (link scrapers, feed readers, some
+       chat previewers) probe /favicon.ico and /apple-touch-icon.png directly.
+       Everything referenced only by a tag below lives in icons/. -->
+
+  <!-- Browser tab. Modern browsers take the SVG (crisp at any zoom / DPI);
+       everything else falls back to the PNG. -->
+  <link rel="icon" type="image/svg+xml" href="icons/favicon.svg?v=2">
+  <link rel="alternate icon" type="image/png" href="icons/favicon.png?v=2" sizes="any">
+  <link rel="alternate icon" href="favicon.ico?v=2" sizes="16x16 32x32 48x48">
+
+  <!-- Safari pinned tabs (legacy, macOS only). Renders the logo as a
+       silhouette in the given colour, so the source must be monochrome. -->
+  <link rel="mask-icon" href="icons/favicon.svg?v=2" color="#e6121c">
+
+  <!-- iOS home screen. MUST be PNG — iOS ignores SVG here, and it composites
+       any transparency onto BLACK, so this file has a baked-in white bg. -->
+  <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png?v=2">
+
+  <!-- Android launcher / PWA icons live in the manifest (192, 512, maskable). -->
+  <link rel="manifest" href="site.webmanifest?v=2">
+  <meta name="theme-color" content="#e6121c">
 
   <link rel="stylesheet" href="style.css">
 </head>
@@ -37,7 +60,7 @@
       <img class="hero"
            src="images/hero.png"
            alt="effectiveffect"
-           width="1024" height="706">
+           width="1024" height="700">
     </picture>
     
     <br>

@@ -22,11 +22,15 @@ images, self-hosted fonts).
 ### What's here
 
 ```
-index.html      The home page
-style.css       Styling (fluid, viewport-relative layout)
-favicon.png     Site icon
-fonts/          Self-hosted Lato 400/700/900 (no external font requests)
-images/         Hero artwork: hero.webp + hero.png fallback
+index.html           The home page
+style.css            Styling (fluid, viewport-relative layout)
+site.webmanifest     Declares the Android launcher icons
+favicon.ico          Root-probed by clients that don't parse the HTML
+apple-touch-icon.png Root-probed by iOS; 180x180, opaque
+icons/               Everything referenced by an explicit tag:
+                     favicon.svg + favicon.png, icon-192/512/maskable-512
+fonts/               Self-hosted Lato 400/700/900 (no external font requests)
+images/              hero.webp + hero.png fallback, og-image.jpg share card
 ```
 
 No build step, framework, or tracking scripts — plain static HTML/CSS.
