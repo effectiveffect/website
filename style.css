@@ -79,6 +79,11 @@
 
   /* Hero image + title share this. Scale knob: 1.0 = same as base (email unaffected). */
   --hero-display: calc(var(--hero-w) * 1.0);
+
+  /* Sizing basis for the headline. Same fluid curve as the hero, but with its
+     own, larger cap: the logo stops growing at 1000px, the headline is allowed
+     to keep growing on wide screens (it never wraps — see .title). */
+  --title-w: clamp(280px, 52vw, 1400px);
 }
 
 * { box-sizing: border-box; }
@@ -97,12 +102,16 @@ body {
   min-height: 100vh;
 }
 
-/* Centered content column */
+/* Centered content column.
+   No max-width: the headline is one unbreakable line that gets WIDER than any
+   reading-width column (~8.1x its font-size), and a 1200px cap forced it to
+   wrap onto two lines on wide screens. Nothing else here needs the cap — the
+   hero has its own max (--hero-display) and the email is a short line.
+   `container-type: inline-size` makes 1cqi = 1% of this column's content box,
+   which is what .title uses to guarantee its line always fits. */
 .content {
-  max-width: 1200px;
-/*
-  max-width: 640px;
-*/
+  max-width: none;
+  container-type: inline-size;
   margin: 0 auto;
   padding: 16px 16px 16px 16px;
   text-align: center;
@@ -130,11 +139,63 @@ body {
   /* Per-element size multiplier; 1 = the base wordmark size. Override it on a
      single heading instead of rewriting the font-size formula. */
   --title-scale: 1;
-  /* Scales in step with the (enlarged) hero, keeping the same title-to-hero
-     ratio, with a readable floor for small screens. The floor is inside the
-     multiplication, so a scaled-up title scales its minimum too. */
-  font-size: calc(max(12px, calc(var(--hero-display) * 0.069)) * var(--title-scale));
-  letter-spacing: -0.022em;
+  /* Sizing basis; defaults to the hero so a plain .title keeps the old
+     title-to-hero ratio. h1.title swaps in --title-w to outgrow the logo. */
+  --title-basis: var(--hero-display);
+  /* Tracking. HARD CEILING: -0.02em. Lato Black's tightest pair of flat-sided
+     capitals is "TT", which the designer gave exactly 0.020em of clearance
+     (every other pair in this headline has 0.028em..0.135em, and the font ships
+     no kern pairs for capitals, so nothing else moves them). Negative tracking
+     is subtracted straight from that gap, so anything beyond -0.02em makes T|T
+     collide — -0.022em did, by -0.002em, which is why the crossbars merged.
+     -0.01em keeps the display look and still leaves T|T half its designed gap
+     (~1.5px at 153px, ~2.2px at 215px). Widen, never tighten. */
+  --title-tracking: -0.01em;
+  /* Extra gap for the hand-kerned pair (.kern below), ON TOP of the tracking.
+     In em, not px, so it scales with the fluid heading instead of turning into
+     a hole on phones. 0.023em is ~3.5px at the 153px desktop rendering and
+     ~4.9px at the 215px maximum; it lands T|T at 0.033em total, right next to
+     the neighbouring ET pair's 0.036em, so the word stays evenly spaced. */
+  --kern: 0.023em;
+  /* Word gap, added to the space character. This is the knob for "the two words
+     sit too close" — NOT a second space in the HTML, which does nothing because
+     whitespace runs collapse, and not a span on the G, which would only work
+     for this one word. Lato's space is a narrow 0.193em, and G|T reads tighter
+     than it measures (the G curves away while the T's crossbar reaches left
+     over the gap, on only 0.010em of left sidebearing — the tightest left side
+     in the alphabet), so all-caps display needs the space opened up: 0.08em
+     takes the ink-to-ink gap from 0.221em to 0.301em, ~34px -> ~46px at 153px. */
+  --word-gap: 0.13em;
+  /* Width of this heading's text in ems, at weight 900 with everything above:
+     8.39em of advances - 15 chars x 0.01em tracking + 0.023em kern + 0.08em
+     word gap = 8.34em. 8.6 leaves headroom for rounding and for the fallback
+     fonts. Retune per heading if the text, the tracking, the kern or the word
+     gap changes — it is what keeps the line from ever wrapping. */
+  --title-line-em: 8.6;
+
+  /* One line, always. Two rules co-operate:
+     1. nowrap forbids the break that produced "SETTING / TRENDS.";
+     2. the min() caps the size at whatever still fits the column
+        (100cqi / line-width-in-ems), so nowrap can never overflow instead.
+     Below that cap the first term wins and the title scales fluidly as before,
+     with a readable floor for small screens (inside the multiplication, so a
+     scaled-up title scales its minimum too). */
+  white-space: nowrap;
+  font-size: min(
+    calc(max(12px, calc(var(--title-basis) * 0.069)) * var(--title-scale)),
+    calc(100cqi / var(--title-line-em))
+  );
+  letter-spacing: var(--title-tracking);
+  word-spacing: var(--word-gap);
+}
+
+/* Manual kern. CSS has no selector for a character PAIR, so the left glyph of
+   the pair is wrapped in <span class="kern"> in the HTML: letter-spacing
+   applies after every character in the span, which is exactly the one gap we
+   want to open. Reusable — wrap the left glyph of any pair that needs air, and
+   override --kern on that span for a different amount. */
+.title .kern {
+  letter-spacing: calc(var(--title-tracking) + var(--kern));
   line-height: 1.2;
   margin: 0.3em 0 0.4em;
 }
@@ -143,7 +204,7 @@ body {
    logo's own weight contrast — heavy "effective", light "ffect". The default 900
    has nothing heavier to jump to, so the emphasis is built by making the LINE
    light and the <b> heavy, rather than the other way round. */
-h1.title   { --title-scale: 2.22; font-weight: 500; }
+h1.title   { --title-scale: 2.22; --title-basis: var(--title-w); font-weight: 500; }
 h1.title b { font-weight: 900; }
 
 .title a {
